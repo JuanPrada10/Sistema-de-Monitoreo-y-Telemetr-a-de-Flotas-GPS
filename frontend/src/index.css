@@ -1,1 +1,12 @@
 @import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+@theme {
+  --font-display: "Satoshi", "sans-serif";
+  
+  --color-neutral-bg:#0C1512;
+  --color-primary-100:#00FFAA;
+  --color-secondary:#0D1524;
+  --color-bg:#0B1114;
+ 
+}
