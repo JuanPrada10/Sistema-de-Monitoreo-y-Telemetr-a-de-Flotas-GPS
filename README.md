@@ -27,6 +27,12 @@ cd frontend
 pnpm install
 pnpm run dev
 ```
+### 4. Simulador
+
+```bash
+cd Simulator
+node Simulate.js
+```
 
 > La API corre en `http://localhost:3000` y el frontend en `http://localhost:5173`
 
@@ -35,48 +41,37 @@ pnpm run dev
 ## Arquitectura
 
 ### Backend — NestJS
-
-Decidi utilizar NestJS ademas por la familiaridad,
-por su arquitectura modular permite separar responsabilidades
-desde el inicio de forma natural. Su sistema de validacion declarativo
-con class-validator resuelve limpiamente las validaciones de los
+Decidi utilizar NestJS ademas por la familiaridad, 
+por su arquitectura modular permite separar responsabilidades 
+desde el inicio de forma natural. Su sistema de validacion declarativo 
+con class-validator resuelve limpiamente las validaciones de los 
 endpoints sin logica adicional en los controladores.
 
 ### Base de datos — PostgreSQL
-
-Decidi optar por una base de datos relacional en este caso Postgres
-por la facilidad que da al momento de hacer querys personalizadas ademas
-por el hecho de poder aplicar una eliminacion en cascada que se da gracias
+Decidi optar por una base de datos relacional en este caso Postgres 
+por la facilidad que da al momento de hacer querys personalizadas ademas 
+por el hecho de poder aplicar una eliminacion en cascada que se da gracias 
 a la relacion entre tablas.
 
 ### Frontend — React + Tailwind
-
-Decidi usar react ya que es tengo mucha mas familiaridad con esta libreria
+Decidi usar react ya que tengo mucha mas familiaridad con esta libreria 
 y preferi el modelo de componentes que conlleva usar este antes que usar Vanilla JS que
-complicaria mucho mas las cosas, esto mas Tailwind que agiliza los estilos.
+complicaria mucho mas las cosas, esto mas Tailwind que agiliza los estilos. 
 
 ---
 
 ##  Endpoints
 
-| Método   | Ruta            | Descripción                             |
+| Metodo   | Ruta            | Descripcion                             |
 | -------- | --------------- | --------------------------------------- |
 | `POST`   | `/gps`          | Ingesta de coordenada GPS               |
-| `GET`    | `/vehicles`     | Lista todos los vehículos con su estado |
-| `GET`    | `/vehicles/:id` | Detalle de un vehículo específico       |
+| `GET`    | `/vehicles`     | Lista todos los vehiculos con su estado |
+| `GET`    | `/vehicles/:id` | Detalle de un vehiculo especifico       |
 | `DELETE` | `/vehicles/:id` | Elimina un vehículo y su historial      |
-
-### Lógica de estados
-
-| Estado        | Condición                                        |
-| ------------- | ------------------------------------------------ |
-| En movimiento | Coordenadas recibidas en los últimos 60 segundos |
-| Detenido      | Sin nuevas coordenadas entre 1 y 2 minutos       |
-| Sin señal     | Sin datos hace más de 2 minutos                  |
 
 ---
 
-## Reflexión — Eliminación de vehículos con caché y base de datos
+## Eliminacion de vehiculos con cache y base de datos
 
 > _Pregunta de la sección 03.1 D_
 
@@ -87,7 +82,6 @@ en el cache se estarian mostrando vehiculos que ya no hacen parte del programa y
 en el caso que se elimine en el cache pero no el la base de datos no se estaria eliminado realmente,
 por lo que en conclusion la mejor opcion seria validar la perfecta sincronia entre ambos primero elimindando
 en la base de datos y luego invalidado en el cache.
-.
 
 ---
 
@@ -95,18 +89,18 @@ en la base de datos y luego invalidado en el cache.
 
 ### 1. ¿Que herramientas use?
 
-- **Claude** — consultas de arquitectura, diseño de entidades y lógica de negocio
-- **OpenCode** — decisiones técnicas durante el desarrollo y revisión de código
+- **Claude** — consultas de arquitectura, diseño de entidades y logica de negocio
+- **OpenCode** — decisiones técnicas durante el desarrollo y revision de codigo
 - **Stitch** — diseño visual de la interfaz de usuario
 
 ### 2. ¿Para que tareas me apoye en la IA?
 
-- Definición de la estructura de módulos de NestJS
+- Definicion de la estructura de módulos de NestJS
 - Diseño del esquema de base de datos
-- Generación de rutas simuladas para el simulador de telemetría
+- Generacion de rutas simuladas para el simulador de telemetría
 - Prototipo visual del dashboard en Stitch antes de implementarlo en React
 
-### 3. ¿Qué error de la IA encontre y como lo corregi?
+### 3. ¿Que error de la IA encontre y como lo corregi?
 
 La IA me recomendaba soluciones con mayor complejidad de la necesaria para la solucion de la prueba.
 En el backend me recomendo crear mas entidades y modulos de los que el problema lo requeria complicando un poco la solucion.
