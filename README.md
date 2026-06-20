@@ -57,7 +57,7 @@ complicaria mucho mas las cosas, esto mas Tailwind que agiliza los estilos.
 
 ---
 
-## 📡 Endpoints
+##  Endpoints
 
 | Método   | Ruta            | Descripción                             |
 | -------- | --------------- | --------------------------------------- |
