@@ -1,19 +1,19 @@
 const API_URL = 'http://localhost:3000/gps';
 
 const vehicles = [
-  { id: 'VH-001', lat: 14.6349, lng: -90.5069, moving: true },
-  { id: 'VH-002', lat: 14.6400, lng: -90.5100, moving: true },
-  { id: 'VH-003', lat: 14.6350, lng: -90.5070, moving: false },
+  { id: 'VH-001', lat: 4.7110, lng: -74.0721, moving: true },
+  { id: 'VH-002', lat: 4.7200, lng: -74.0800, moving: true },
+  { id: 'VH-003', lat: 4.7150, lng: -74.0750, moving: false },
 ];
 
 function generateInvalidPayload() {
   const errors = [
-    { vehicle_id: '', lat: 14.6349, lng: -90.5069, timestamp: new Date().toISOString() },
-    { vehicle_id: 'VH-ERR', lat: 200, lng: -90.5069, timestamp: new Date().toISOString() },
-    { vehicle_id: 'VH-ERR', lat: 14.6349, lng: 999, timestamp: new Date().toISOString() },
-    { vehicle_id: 'VH-ERR', lat: 14.6349, lng: -90.5069, timestamp: 'not-a-date' },
-    { lat: 14.6349, lng: -90.5069, timestamp: new Date().toISOString() },
-    { vehicle_id: 'VH-ERR', lng: -90.5069, timestamp: new Date().toISOString() },
+    { vehicle_id: '', lat: 4.7110, lng: -74.0721, timestamp: new Date().toISOString() },
+    { vehicle_id: 'VH-ERR', lat: 200, lng: -74.0721, timestamp: new Date().toISOString() },
+    { vehicle_id: 'VH-ERR', lat: 4.7110, lng: 999, timestamp: new Date().toISOString() },
+    { vehicle_id: 'VH-ERR', lat: 4.7110, lng: -74.0721, timestamp: 'not-a-date' },
+    { lat: 4.7110, lng: -74.0721, timestamp: new Date().toISOString() },
+    { vehicle_id: 'VH-ERR', lng: -74.0721, timestamp: new Date().toISOString() },
   ];
   return errors[Math.floor(Math.random() * errors.length)];
 }

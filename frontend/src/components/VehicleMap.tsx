@@ -1,33 +1,71 @@
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import L from "leaflet";
+import type { Vehicle } from "../types/vehicle";
 
-import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
-import markerIcon from "leaflet/dist/images/marker-icon.png";
-import markerShadow from "leaflet/dist/images/marker-shadow.png";
+const iconUrls = {
+  "En movimiento":
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png",
+  Detenido:
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png",
+  "Sin señal":
+    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+};
 
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconUrl: markerIcon,
-  iconRetinaUrl: markerIcon2x,
-  shadowUrl: markerShadow,
-});
+function createIcon(status: string) {
+  const url =
+    (iconUrls as Record<string, string>)[status] || iconUrls["Sin señal"];
+  return L.icon({
+    iconUrl: url,
+    iconRetinaUrl:
+      "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+    shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+  });
+}
 
-export const VehicleMap = () => {
+interface Props {
+  vehicles: Vehicle[];
+}
+
+export const VehicleMap = ({ vehicles }: Props) => {
+  const withCoords = vehicles.filter(
+    (v) => v.last_lat != null && v.last_lng != null,
+  );
+  const center: [number, number] = [4.7110, -74.0721];
+
   return (
-    <div className="h-140 w-220 rounded-xl overflow-hidden">
+    <div style={{ height: "100%", width: "100%" }}>
       <MapContainer
-        center={[14.6349, -90.5069]}
+        center={center}
         zoom={12}
-        scrollWheelZoom={false}
-        className="h-full w-ful"
+        scrollWheelZoom={true}
+        style={{ height: "100%", width: "100%" }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        <Marker position={[14.6349, -90.5069]}>
-          <Popup>Ubicación de prueba</Popup>
-        </Marker>
+        {withCoords.map((v) => (
+          <Marker
+            key={v.vehicle_id}
+            position={[v.last_lat!, v.last_lng!]}
+            icon={createIcon(v.status)}
+          >
+            <Popup>
+              <strong>{v.vehicle_id}</strong>
+              <br />
+              Estado: {v.status}
+              {v.last_seen && (
+                <>
+                  <br />
+                  Última vez:{" "}
+                  {new Date(v.last_seen).toLocaleTimeString("es-GT")}
+                </>
+              )}
+            </Popup>
+          </Marker>
+        ))}
       </MapContainer>
     </div>
   );
