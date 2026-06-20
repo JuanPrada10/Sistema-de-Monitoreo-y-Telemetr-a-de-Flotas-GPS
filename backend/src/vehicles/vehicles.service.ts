@@ -1,26 +1,98 @@
-import { Injectable } from '@nestjs/common';
-import { CreateVehicleDto } from './dto/create-vehicle.dto';
-
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Vehicle } from './entities/vehicle.entity';
+import { Gps } from 'src/gps/entities/gps.entity';
 
 @Injectable()
 export class VehiclesService {
-  create(createVehicleDto: CreateVehicleDto) {
-    return 'This action adds a new vehicle';
+  constructor(
+    @InjectRepository(Vehicle)
+    private vehicleRepo: Repository<Vehicle>,
+    @InjectRepository(Gps)
+    private gpsRepo: Repository<Gps>,
+  ) {}
+
+  async findAll() {
+    const vehicles = await this.vehicleRepo.find({
+      order: { created_at: 'ASC' },
+    });
+
+    const now = new Date();
+    const twoMinutesAgo = new Date(now.getTime() - 2 * 60 * 1000);
+
+    const results: { vehicle_id: string; last_lat: number | null; last_lng: number | null; last_seen: string | null; status: string }[] = [];
+
+    for (const vehicle of vehicles) {
+      const lastGps = await this.gpsRepo.findOne({
+        where: { vehicle: { vehicle_id: vehicle.vehicle_id } },
+        order: { timestamp: 'DESC' },
+      });
+
+      if (!lastGps) {
+        results.push({
+          vehicle_id: vehicle.vehicle_id,
+          last_lat: null,
+          last_lng: null,
+          last_seen: null,
+          status: 'Sin señal',
+        });
+        continue;
+      }
+
+      const lastSeen = new Date(lastGps.timestamp);
+      const secondsSinceLastSeen = (now.getTime() - lastSeen.getTime()) / 1000;
+
+      if (secondsSinceLastSeen > 120) {
+        results.push({
+          vehicle_id: vehicle.vehicle_id,
+          last_lat: lastGps.lat,
+          last_lng: lastGps.lng,
+          last_seen: lastSeen.toISOString(),
+          status: 'Sin señal',
+        });
+        continue;
+      }
+
+      const lastTwoGps = await this.gpsRepo.find({
+        where: { vehicle: { vehicle_id: vehicle.vehicle_id } },
+        order: { timestamp: 'DESC' },
+        take: 2,
+      });
+
+      const prevGps = lastTwoGps.length > 1 ? lastTwoGps[1] : null;
+
+      const isMoving =
+        prevGps &&
+        (Number(prevGps.lat) !== Number(lastGps.lat) ||
+          Number(prevGps.lng) !== Number(lastGps.lng));
+
+      const status = isMoving ? 'En movimiento' : 'Detenido';
+
+      results.push({
+        vehicle_id: vehicle.vehicle_id,
+        last_lat: lastGps.lat,
+        last_lng: lastGps.lng,
+        last_seen: lastSeen.toISOString(),
+        status,
+      });
+    }
+
+    return results;
   }
 
-  findAll() {
-    return `This action returns all vehicles`;
+  async remove(id: string) {
+    const vehicle = await this.vehicleRepo.findOne({
+      where: { vehicle_id: id },
+    });
+
+    if (!vehicle) {
+      throw new NotFoundException(`Vehículo "${id}" no encontrado`);
+    }
+
+    await this.gpsRepo.delete({ vehicle: { vehicle_id: id } });
+    await this.vehicleRepo.remove(vehicle);
+
+    return { message: `Vehículo "${id}" eliminado` };
   }
-
-//   findOne(id: number) {
-//     return `This action returns a #${id} vehicle`;
-//   }
-
-//   update(id: number, updateVehicleDto: UpdateVehicleDto) {
-//     return `This action updates a #${id} vehicle`;
-//   }
-
-//   remove(id: number) {
-//     return `This action removes a #${id} vehicle`;
-//   }
 }
