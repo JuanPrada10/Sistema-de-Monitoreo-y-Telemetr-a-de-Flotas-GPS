@@ -1,4 +1,9 @@
 # Sistema de Monitoreo y Telemetría de Flotas GPS
+##  Tech Stack
+
+<p>
+  <img src="https://skillicons.dev/icons?i=nestjs,postgres,react,typescript,docker" />
+</p>
 
 Prototipo funcional de un sistema de telemetría GPS desarrollado como prueba técnica para el rol de Fullstack Developer.
 
@@ -110,5 +115,5 @@ pero para un prototipo me parecio que era over-engineering por lo cual decidi op
 ---
 
 ## Video de sustentación
-
+  https://youtu.be/uGNZcGYjBmc
 ---
