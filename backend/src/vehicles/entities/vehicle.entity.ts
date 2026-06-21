@@ -5,7 +5,7 @@ import { CreateDateColumn, Entity, OneToMany, PrimaryColumn } from "typeorm";
 @Entity()
 export class Vehicle {
 
-    @PrimaryColumn({ unique: true})
+@PrimaryColumn({ unique: true})
     vehicle_id!:string
 
    @CreateDateColumn({ type: 'timestamptz' })

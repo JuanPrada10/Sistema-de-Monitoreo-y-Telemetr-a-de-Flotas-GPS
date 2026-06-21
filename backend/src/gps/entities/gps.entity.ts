@@ -19,7 +19,7 @@ export class Gps {
     @CreateDateColumn({ type: 'timestamptz' })
     created_at!: Date 
 
-    @ManyToOne(()=>Vehicle, (vehicle)=> vehicle.vehicle_id)
+    @ManyToOne(()=>Vehicle, (vehicle)=> vehicle.vehicle_id,{onDelete: 'CASCADE'})
     vehicle!:Vehicle
 
 }

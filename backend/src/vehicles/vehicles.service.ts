@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Vehicle } from './entities/vehicle.entity';
 import { Gps } from 'src/gps/entities/gps.entity';
+import { VehicleResponse } from './types/VehiclesResponse.interface';
 
 @Injectable()
 export class VehiclesService {
@@ -19,9 +20,9 @@ export class VehiclesService {
     });
 
     const now = new Date();
-    const twoMinutesAgo = new Date(now.getTime() - 2 * 60 * 1000);
 
-    const results: { vehicle_id: string; last_lat: number | null; last_lng: number | null; last_seen: string | null; status: string }[] = [];
+
+    const results: VehicleResponse[] = [];
 
     for (const vehicle of vehicles) {
       const lastGps = await this.gpsRepo.findOne({
@@ -90,7 +91,7 @@ export class VehiclesService {
       throw new NotFoundException(`Vehículo "${id}" no encontrado`);
     }
 
-    await this.gpsRepo.delete({ vehicle: { vehicle_id: id } });
+   
     await this.vehicleRepo.remove(vehicle);
 
     return { message: `Vehículo "${id}" eliminado` };
